@@ -97,7 +97,7 @@ def on_ui_settings():
     )
 
 
-def on_app_started():
+def on_app_started(_, __):
     """
     Initializes the extension when it starts.
 
