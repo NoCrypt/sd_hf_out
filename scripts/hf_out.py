@@ -120,9 +120,10 @@ def on_app_started(_, __):
     """
     global username, api, user_repo, enabled, token, user_repo, repo
 
-    if not hasattr(shared.cmd_opts, "hf_token_out"):
+    if not shared.cmd_opts.hf_token_out:
         print("[HF Out] No HF Token provided. HF Out will be disabled.")
         return
+
     token = shared.cmd_opts.hf_token_out
 
     if get_token_permission(token) == "read":
@@ -139,7 +140,7 @@ def on_app_started(_, __):
         dataset_url = api.create_repo(
             repo_id=user_repo, private=True, repo_type="dataset"
         )
-        print("[HF Out] Created Dataset Repo: ", dataset_url)
+        print("[HF Out] Created Private HF Dataset Repo: ", dataset_url)
 
     except HfHubHTTPError as e:
         print("[HF Out] Dataset Repo already exists. Skipping.")
@@ -158,14 +159,19 @@ def on_app_started(_, __):
         )
         api.upload_file(
             repo_id=user_repo + "_gallery",
-            path_or_fileobj=get_self_extension_path() + "/gallery_space.py",
+            path_or_fileobj=os.path.join(get_self_extension_path(), "gallery_space.py"),
             path_in_repo="app.py",
             token=token,
             run_as_future=True,
+            repo_type="space",
         )
-        api.restart_space(repo_id=user_repo + "_gallery", token=token)
+        # api.restart_space(repo_id=user_repo + "_gallery", token=token)
 
-        print("[HF Out] Created Space Repo: ", space_url)
+        print("[HF Out] Created Private HF Space: ", space_url)
+        print(
+            "[HF Out] Newly created space can be used to view ur generations! But it took a while to build for the first time (depends on how busy HF server is)..."
+        )
+        print("[HF Out] If it stucked, Go to settings > make public > factory reboot")
     except HfHubHTTPError as e:
         print("[HF Out] Space Repo already exists. Skipping.")
 
