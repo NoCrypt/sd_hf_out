@@ -63,15 +63,13 @@ def on_image_saved(params):
         return
     
     print("[HF Out] Uploading Image...")
-    try:
-        api.upload_file(
-            repo_id=user_repo,
-            path_or_fileobj=Path(root_path) / params.filename,
-            token=token,
-            run_as_future=True,
-        )
-    except HTTPError as e:
-        print("[HF Out] Failed to save image:", e)
+    api.upload_file(
+        repo_id=user_repo,
+        path_or_fileobj=Path(root_path) / params.filename,
+        path_in_repo="data/",
+        token=token,
+        run_as_future=True,
+    )
         
 
 
