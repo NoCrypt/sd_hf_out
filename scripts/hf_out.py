@@ -4,6 +4,7 @@ from huggingface_hub import HfApi, get_token_permission
 from huggingface_hub.utils import HfHubHTTPError
 from requests import HTTPError
 from pathlib import Path
+import os
 
 root_path = paths.script_path
 api = HfApi()
@@ -44,13 +45,13 @@ def get_self_extension_path():
 def on_image_saved(params):
     """
     Saves an image to a remote repository if the `enabled` flag is set to True and the `enable_hf_out` option is enabled.
-    
+
     Parameters:
     - params: A dictionary containing information about the image to be saved.
-    
+
     Returns:
     - None
-    
+
     Raises:
     - HTTPError: If there was an error while uploading the image.
     """
@@ -61,16 +62,18 @@ def on_image_saved(params):
 
     if not shared.opts.enable_hf_out:
         return
-    
-    print("[HF Out] Uploading Image...")
+
+    print("[HF Out] Uploading Image without slowing down generation...")
+
+    full_path = os.path.join(root_path, params.filename)
     api.upload_file(
         repo_id=user_repo,
-        path_or_fileobj=Path(root_path) / params.filename,
-        path_in_repo="data/",
+        path_or_fileobj=full_path,
+        path_in_repo=os.path.join("data", os.path.basename(full_path)),
         token=token,
         run_as_future=True,
+        repo_type="dataset",
     )
-        
 
 
 def on_ui_settings():
@@ -117,7 +120,6 @@ def on_app_started(_, __):
     """
     global username, api, user_repo, enabled, token, user_repo, repo
 
-
     if not hasattr(shared.cmd_opts, "hf_token_out"):
         print("[HF Out] No HF Token provided. HF Out will be disabled.")
         return
@@ -145,7 +147,10 @@ def on_app_started(_, __):
     # Create Space Repo if haven't
     try:
         space_url = api.create_repo(
-            repo_id=user_repo + "_gallery", private=True, repo_type="space", space_sdk="gradio"
+            repo_id=user_repo + "_gallery",
+            private=True,
+            repo_type="space",
+            space_sdk="gradio",
         )
         # if the repo doesnt exist, create it, and set it up
         api.add_space_secret(
