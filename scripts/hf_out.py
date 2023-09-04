@@ -152,10 +152,11 @@ def on_app_started(_, __):
             private=True,
             repo_type="space",
             space_sdk="gradio",
+            token=token,
         )
         # if the repo doesnt exist, create it, and set it up
         api.add_space_secret(
-            repo_id=user_repo + "_gallery", key="HF_TOKEN", value=token
+            repo_id=user_repo + "_gallery", key="HF_TOKEN", value=token, token=token
         )
         api.upload_file(
             repo_id=user_repo + "_gallery",
