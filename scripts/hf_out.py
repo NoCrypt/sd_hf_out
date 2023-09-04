@@ -128,7 +128,7 @@ def on_app_started(_: gr.Blocks, __):
 
     # validate the token
     try:
-      api.whoami(token="")
+      api.whoami(token=token)
     except HTTPError as e:
       if "Invalid user token" in str(e):
         print("[HF Out] Invalid HF Token provided. HF Out will be disabled.")
@@ -151,7 +151,7 @@ def on_app_started(_: gr.Blocks, __):
     # Create Dataset Repo if haven't
     try:
         dataset_url = api.create_repo(
-            repo_id=user_repo, private=True, repo_type="dataset"
+            repo_id=user_repo, private=True, repo_type="dataset", token=token
         )
         print("[HF Out] Created Private HF Dataset Repo: ", dataset_url)
 
