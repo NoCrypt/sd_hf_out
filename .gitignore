@@ -1,0 +1,6 @@
+__pycache__
+.direnv/
+venv/
+flagged/
+images/
+.envrc
