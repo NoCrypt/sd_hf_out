@@ -164,7 +164,7 @@ def on_app_started(_, __):
 
         print("[HF Out] Created Space Repo: ", space_url)
     except HfHubHTTPError as e:
-        print("[HF Out] Space Rpo already exists. Skipping.")
+        print("[HF Out] Space Repo already exists. Skipping.")
 
     enabled = True
     print("[HF Out] Ready to roll!")
