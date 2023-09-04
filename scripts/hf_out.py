@@ -9,7 +9,7 @@ root_path = paths.script_path
 api = HfApi()
 username = ""
 repo = "sd_out"
-user_repo = f"{username}/{repo}"
+user_repo = ""
 enabled = False
 token = ""
 
@@ -117,7 +117,8 @@ def on_app_started(_, __):
 
     This function takes no parameters and has no return value.
     """
-    global username, api, user_repo, enabled, token
+    global username, api, user_repo, enabled, token, user_repo, repo
+
 
     if not hasattr(shared.cmd_opts, "hf_token_out"):
         print("[HF Out] No HF Token provided. HF Out will be disabled.")
@@ -131,6 +132,7 @@ def on_app_started(_, __):
         return
 
     username = api.whoami(token=shared.cmd_opts.hf_token_out)["name"]
+    user_repo = f"{username}/{repo}"
 
     # Create Dataset Repo if haven't
     try:
