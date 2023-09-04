@@ -147,7 +147,7 @@ def on_app_started(_, __):
     # Create Space Repo if haven't
     try:
         space_url = api.create_repo(
-            repo_id=user_repo + "_gallery", private=True, repo_type="space"
+            repo_id=user_repo + "_gallery", private=True, repo_type="space", space_sdk="gradio"
         )
         # if the repo doesnt exist, create it, and set it up
         api.add_space_secret(
