@@ -15,7 +15,7 @@ enabled = False
 token = ""
 
 
-def get_self_extension_path():
+def get_self_extension_path() -> str:
     """
     Returns the path of the active extension that contains the current file.
 
@@ -98,7 +98,7 @@ def on_ui_settings():
     )
 
 
-def on_app_started(_, __):
+def on_app_started(_: gr.Blocks, __):
     """
     Initializes the extension when it starts.
 
@@ -126,6 +126,19 @@ def on_app_started(_, __):
 
     token = shared.cmd_opts.hf_token_out
 
+    # validate the token
+    try:
+      api.whoami(token="")
+    except HTTPError as e:
+      if "Invalid user token" in str(e):
+        print("[HF Out] Invalid HF Token provided. HF Out will be disabled.")
+        return
+      else:
+        print(str(e))
+    except Exception as e:
+      print(str(e))
+
+
     if get_token_permission(token) == "read":
         print(
             "[HF Out] Token permission was on 'READ'. Please provide a 'WRITE' token."
@@ -143,7 +156,10 @@ def on_app_started(_, __):
         print("[HF Out] Created Private HF Dataset Repo: ", dataset_url)
 
     except HfHubHTTPError as e:
-        print("[HF Out] Dataset Repo already exists. Skipping.")
+        if "already created" in e.server_message:
+          print("[HF Out] Dataset Repo already exists. Skipping.")
+        else:
+          print(str(e))
 
     # Create Space Repo if haven't
     try:
@@ -174,7 +190,11 @@ def on_app_started(_, __):
         )
         print("[HF Out] If it stucked, Go to settings > make public > factory reboot")
     except HfHubHTTPError as e:
-        print("[HF Out] Space Repo already exists. Skipping.")
+        if "already created" in e.server_message:
+          print("[HF Out] Space Repo already exists. Skipping.")
+        else:
+          print(str(e))
+
 
     enabled = True
     print("[HF Out] Ready to roll!")
